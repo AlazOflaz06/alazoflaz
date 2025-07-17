@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alaz Oflaz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: black;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+    }
+    .matrix {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .center-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: 2rem;
+      z-index: 2;
+      text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+    }
+    .spotlight {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: radial-gradient(circle at var(--x) var(--y), rgba(0,255,0,0.2) 0%, rgba(0,0,0,0.95) 40%);
+      z-index: 1;
+      transition: background 0.05s;
+    }
+    .glitch {
+      animation: glitch 1s infinite;
+    }
+    @keyframes glitch {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    .warning {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2rem;
+      color: red;
+      z-index: 3;
+      text-shadow: 0 0 10px red;
+      animation: warningAnim 3s infinite;
+    }
+    @keyframes warningAnim {
+      0% {opacity: 0; transform: translateX(-50%) scale(0.8);}
+      50% {opacity: 1; transform: translateX(-50%) scale(1.2);}
+      100% {opacity: 0; transform: translateX(-50%) scale(0.8);}
+    }
+    audio { display: none; }
+  </style>
+</head>
+<body>
+  <canvas class="matrix"></canvas>
+  <div class="spotlight"></div>
+  <div class="center-text">
+    <h1 class="glitch">ALAZ OFLAZ</h1>
+    <p>Sisteme giriş yapılıyor...</p>
+    <p>Kullanıcı doğrulandı: <strong>Alaz Oflaz</strong></p>
+    <p>Bağlantı aktif. <em>Gözleniyorsun...</em></p>
+  </div>
+  <div class="warning">Uyarı: Sistem izleniyor</div>
+  <audio autoplay loop>
+    <source src="https://files.catbox.moe/c7xqmh.mp3" type="audio/mp3">
+  </audio>  <script>
+    // Matrix background
+    const canvas = document.querySelector('.matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const chars = "01".split("");
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array.from({length: columns}).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px Courier New";
+      for(let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if(drops[i] * fontSize > canvas.height || Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 33);
+
+    // Spotlight effect
+    const spotlight = document.querySelector('.spotlight');
+    document.addEventListener('mousemove', e => {
+      spotlight.style.setProperty('--x', `${e.clientX}px`);
+      spotlight.style.setProperty('--y', `${e.clientY}px`);
+    });
+  </script></body>
+</html>
