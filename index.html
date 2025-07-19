@@ -1,73 +1,90 @@
-<!DOCTYPE html>
-<html lang="tr">
+<!DOCTYPE html><html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Alaz Oflaz Hack Sistemi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alaz Oflaz Panel</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      background-color: black;
+      background: black;
+      color: #00ff00;
       font-family: 'Courier New', monospace;
       overflow: hidden;
-      color: #0f0;
+      margin: 0;
+      padding: 0;
     }
-
-    #hack-img {
+    #terminal {
+      white-space: pre-wrap;
+      font-size: 16px;
+      padding: 20px;
+      animation: type 5s steps(40, end) 1;
+    }
+    @keyframes type {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    .warning {
+      color: red;
+      font-weight: bold;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .glitch {
+      color: red;
+      animation: glitch 0.3s infinite;
+    }
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red; }
+      50% { text-shadow: -2px 0 blue; }
+      100% { text-shadow: 2px 0 red; }
+    }
+    .window {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #111;
+      color: red;
+      padding: 10px;
+      border: 1px solid red;
+      box-shadow: 0 0 20px red;
+      font-size: 14px;
+      animation: fade 4s ease-in-out;
+    }
+    @keyframes fade {
+      0% { opacity: 0; }
+      25% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .image-bg {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.2;
+      width: 100vw;
+      height: 100vh;
+      background: url('https://raw.githubusercontent.com/AlazOflaz06/assets/main/korku_art.png') center/cover no-repeat;
       z-index: -1;
-      filter: blur(2px);
-    }
-
-    .animated-text {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 1.5em;
-      color: #f00;
-      font-weight: bold;
-      animation: slideDown 3s ease forwards, shake 0.3s infinite;
-      opacity: 0;
-    }
-
-    .text1 { top: 20%; animation-delay: 0s; }
-    .text2 { top: 30%; animation-delay: 2s; }
-    .text3 { top: 40%; animation-delay: 4s; }
-    .text4 { top: 50%; animation-delay: 6s; }
-    .text5 { top: 60%; animation-delay: 8s; }
-
-    @keyframes slideDown {
-      0% { transform: translate(-50%, -100px); opacity: 0; }
-      100% { transform: translate(-50%, 0); opacity: 1; }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      25% { transform: translateX(-50%) translateY(-3px); }
-      50% { transform: translateX(-50%) translateY(3px); }
-      75% { transform: translateX(-50%) translateY(-2px); }
+      filter: brightness(0.3);
     }
   </style>
 </head>
 <body>
-
-  <img id="hack-img" src="https://AlazOflaz06.github.io/alaz-hack/assets/hackbg5.png" alt="Hacker Image">
-
-  <div class="animated-text text1">IP TESPİT EDİLDİ</div>
-  <div class="animated-text text2">KONUM BULUNDU</div>
-  <div class="animated-text text3">SİSTEM AÇIKLARI TESPİT EDİLİYOR</div>
-  <div class="animated-text text4">ALAZ OFLAZ SİSTEMİNİZE ERİŞİYOR...</div>
-  <div class="animated-text text5">TÜM VERİLERİNİZ YÜKLENİYOR...</div>
-
+  <div class="image-bg"></div>
+  <div id="terminal">
+    <div class="warning">IP TESPİT EDİLDİ...</div>
+    KONUM BULUNDU: ANKARA / TÜRKİYE
+    <br>
+    ALAZ OFLAZ SİSTEMİNİZE ERİŞİYOR...
+    <br>
+    VERİLERİNİZ YÜKLENİYOR...
+    <br>
+    CİHAZINIZ 15 SANİYE İÇİNDE KONTROL ALTINA ALINACAK...
+    <br>
+    <div class="glitch">SİSTEM GÜVENLİĞİNİZ AŞILDI</div>
+    <br>
+    <div class="glitch">KAYITLI TÜM BİLGİLERİNİZ GÖNDERİLİYOR...</div>
+  </div>
+  <div class="window">UYARI: SİSTEM UYUMLULUĞU BAŞARISIZ. KONTROL ELE GEÇİRİLİYOR.</div>
 </body>
 </html>
