@@ -27,7 +27,7 @@
     line-height: 1.3;
     max-width: 800px;
     width: 95vw;
-    height: 60vh;
+    height: 70vh;
     background: rgba(0,0,0,0.9);
     border: 2px solid #00ff00;
     padding: 15px 20px;
@@ -124,65 +124,12 @@
     0%, 50% { opacity: 1; }
     51%, 100% { opacity: 0; }
   }
-  /* Buttons */
-  #controls {
-    margin-top: 15px;
-    display: flex;
-    gap: 15px;
-    user-select:none;
-  }
-  button {
-    background: transparent;
-    border: 2px solid #00ff00;
-    color: #00ff00;
-    padding: 8px 14px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: 0.3s;
-  }
-  button:hover {
-    background: #00ff00;
-    color: black;
-  }
-  /* Progress bars */
-  .progress-container {
-    width: 100%;
-    background: #222;
-    border-radius: 8px;
-    margin-top: 6px;
-    overflow: hidden;
-  }
-  .progress-bar {
-    height: 14px;
-    background: #00ff00;
-    width: 0;
-    transition: width 0.3s ease;
-  }
-  /* Responsive */
-  @media (max-width: 600px) {
-    #terminal {
-      font-size: 14px;
-      height: 50vh;
-    }
-    button {
-      font-size: 14px;
-      padding: 6px 10px;
-    }
-  }
 </style>
 </head>
 <body>
   <div class="image-bg"></div>
   <div class="glitch-overlay"></div>
   <div id="terminal" aria-live="polite" aria-atomic="true" role="log"></div>
-
-  <div id="controls">
-    <button id="startBtn">Tarama Başlat</button>
-    <button id="stopBtn" disabled>Tarama Durdur</button>
-    <button id="toggleSoundBtn">Ses Aç</button>
-  </div>
 
   <div id="popup" class="window" style="display:none; user-select:none;"></div>
 
@@ -193,19 +140,12 @@
 (() => {
   const terminal = document.getElementById('terminal');
   const popup = document.getElementById('popup');
-  const startBtn = document.getElementById('startBtn');
-  const stopBtn = document.getElementById('stopBtn');
-  const toggleSoundBtn = document.getElementById('toggleSoundBtn');
   const alarmSound = document.getElementById('alarmSound');
   const typingSound = document.getElementById('typingSound');
 
-  let soundEnabled = false;
-  let scanInterval;
-  let typingInterval;
+  let soundEnabled = true;
   let currentLine = 0;
-  let isScanning = false;
 
-  // Sahte IP, konum, ISP listesi
   const fakeData = {
     ips: [
       '185.56.230.123',
@@ -219,15 +159,7 @@
       '212.174.30.12'
     ],
     locations: [
-      'Ankara / Türkiye',
-      'İstanbul / Türkiye',
-      'İzmir / Türkiye',
-      'Bursa / Türkiye',
-      'Antalya / Türkiye',
-      'Konya / Türkiye',
-      'Kayseri / Türkiye',
-      'Adana / Türkiye',
-      'Diyarbakır / Türkiye'
+      'Türkiye'
     ],
     isps: [
       'Turk Telekom',
@@ -242,12 +174,11 @@
     ]
   };
 
-  // Tarama sırasında gösterilecek sahte satırlar
   const scanLines = [
     () => `IP TESPİT EDİLDİ: ${randomItem(fakeData.ips)}`,
     () => `KONUM BULUNDU: ${randomItem(fakeData.locations)}`,
     () => `ISP: ${randomItem(fakeData.isps)}`,
-    () => `ALA Oflaz SİSTEMİNİZE ERİŞİYOR...`,
+    () => `ALAZ OFLAZ SİSTEMİNİZE ERİŞİYOR...`,
     () => `VERİLERİNİZ YÜKLENİYOR...`,
     () => `CİHAZINIZ ${randomInt(10,20)} SANİYE İÇİNDE KONTROL ALTINA ALINACAK...`,
     () => `<span class="glitch">SİSTEM GÜVENLİĞİNİZ AŞILDI</span>`,
@@ -255,7 +186,6 @@
     () => `<span class="warning">UYARI: SİSTEM UYUMLULUĞU BAŞARISIZ. KONTROL ELE GEÇİRİLİYOR.</span>`
   ];
 
-  // Popup mesajlar
   const popupMessages = [
     'FIREWALL DEVRE DIŞI BIRAKILDI!',
     'ANTİVİRÜS PROGRAMI KAPATILDI!',
@@ -268,7 +198,6 @@
     'SİSTEM ELE GEÇİRİLDİ!',
   ];
 
-  // Yazı animasyon fonksiyonu
   function typeLine(text, callback) {
     let i = 0;
     let lineElem = document.createElement('div');
@@ -282,9 +211,8 @@
           typingSound.currentTime = 0;
           typingSound.play();
         }
-        setTimeout(typeChar, randomInt(20, 50));
+        setTimeout(typeChar, randomInt(10, 25));
       } else {
-        // Cursor ekle
         let cursor = document.createElement('span');
         cursor.className = 'cursor';
         lineElem.appendChild(cursor);
@@ -295,17 +223,14 @@
     typeChar();
   }
 
-  // Rastgele item seçici
   function randomItem(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
-  // Rastgele int arası sayı
   function randomInt(min,max) {
     return Math.floor(Math.random() * (max-min+1)) + min;
   }
 
-  // Popup göster
   function showPopup(msg) {
     popup.textContent = msg;
     popup.style.display = 'block';
@@ -315,112 +240,67 @@
     }, 4000);
   }
 
-  // Tarama başlat
-  function startScan() {
-    if(isScanning) return;
-    isScanning = true;
-    currentLine = 0;
-    terminal.innerHTML = '';
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    showPopup('TARAMA BAŞLATILDI');
-    scanInterval = setInterval(() => {
-      if(currentLine < scanLines.length) {
-        typeLine(scanLines[currentLine]());
-        currentLine++;
-      } else {
-        // Dosya indirme göster
-        clearInterval(scanInterval);
-        fakeDownload(() => {
-          showPopup(randomItem(popupMessages));
-          startBtn.disabled = false;
-          stopBtn.disabled = true;
-          isScanning = false;
-        });
-      }
-    }, 3000);
-  }
-
-  // Tarama durdur
-  function stopScan() {
-    clearInterval(scanInterval);
-    isScanning = false;
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-    showPopup('TARAMA DURDURULDU');
-  }
-
-  // Sahte dosya indirme animasyonu
+  // Dosya indirme ve yükleme animasyonları
   function fakeDownload(callback) {
-    typeLine('DOSYA İNDİRİLİYOR: exploit_data.bin');
-    let progressContainer = document.createElement('div');
-    progressContainer.className = 'progress-container';
-    let progressBar = document.createElement('div');
-    progressBar.className = 'progress-bar';
-    progressContainer.appendChild(progressBar);
-    terminal.appendChild(progressContainer);
-    let width = 0;
-    let interval = setInterval(() => {
-      width += randomInt(5, 15);
-      if(width > 100) width = 100;
-      progressBar.style.width = width + '%';
-      terminal.scrollTop = terminal.scrollHeight;
-      if(width === 100) {
-        clearInterval(interval);
-        typeLine('DOSYA YÜKLENİYOR...');
-        fakeUpload(callback);
-      }
-    }, 400);
-  }
-  // Sahte dosya yükleme animasyonu
-  function fakeUpload(callback) {
-    typeLine('VERİLER SUNUCUYA GÖNDERİLİYOR...');
-    let progressContainer = document.createElement('div');
-    progressContainer.className = 'progress-container';
-    let progressBar = document.createElement('div');
-    progressBar.className = 'progress-bar';
-    progressContainer.appendChild(progressBar);
-    terminal.appendChild(progressContainer);
-    let width = 0;
-    let interval = setInterval(() => {
-      width += randomInt(5, 20);
-      if(width > 100) width = 100;
-      progressBar.style.width = width + '%';
-      terminal.scrollTop = terminal.scrollHeight;
-      if(width === 100) {
-        clearInterval(interval);
-        typeLine('<span class="warning">UYARI: SİSTEM ELE GEÇİRİLDİ!</span>');
-        if(callback) callback();
-      }
-    }, 300);
+    typeLine('DOSYA İNDİRİLİYOR: exploit_data.bin', () => {
+      let progressContainer = document.createElement('div');
+      progressContainer.className = 'progress-container';
+      let progressBar = document.createElement('div');
+      progressBar.className = 'progress-bar';
+      progressContainer.appendChild(progressBar);
+      terminal.appendChild(progressContainer);
+      let width = 0;
+      let interval = setInterval(() => {
+        width += randomInt(5, 15);
+        if(width > 100) width = 100;
+        progressBar.style.width = width + '%';
+        terminal.scrollTop = terminal.scrollHeight;
+        if(width === 100) {
+          clearInterval(interval);
+          typeLine('DOSYA YÜKLENİYOR...', fakeUpload);
+        }
+      }, 400);
+    });
   }
 
-  // Ses aç/kapa toggle
-  toggleSoundBtn.onclick = () => {
-    soundEnabled = !soundEnabled;
-    toggleSoundBtn.textContent = soundEnabled ? 'Ses Kapat' : 'Ses Aç';
-    if(!soundEnabled) {
-      alarmSound.pause();
-      typingSound.pause();
+  function fakeUpload() {
+    typeLine('VERİLER SUNUCUYA GÖNDERİLİYOR...', () => {
+      let progressContainer = document.createElement('div');
+      progressContainer.className = 'progress-container';
+      let progressBar = document.createElement('div');
+      progressBar.className = 'progress-bar';
+      progressContainer.appendChild(progressBar);
+      terminal.appendChild(progressContainer);
+      let width = 0;
+      let interval = setInterval(() => {
+        width += randomInt(5, 20);
+        if(width > 100) width = 100;
+        progressBar.style.width = width + '%';
+        terminal.scrollTop = terminal.scrollHeight;
+        if(width === 100) {
+          clearInterval(interval);
+          typeLine('<span class="warning">UYARI: SİSTEM ELE GEÇİRİLDİ!</span>');
+          showPopup(randomItem(popupMessages));
+        }
+      }, 300);
+    });
+  }
+
+  function scanNextLine() {
+    if(currentLine < scanLines.length) {
+      typeLine(scanLines[currentLine](), () => {
+        currentLine++;
+        setTimeout(scanNextLine, 2500);
+      });
+    } else {
+      // Tüm satırlar yazıldı, dosya animasyonlarına geç
+      setTimeout(fakeDownload, 1000);
     }
-  };
+  }
 
-  startBtn.onclick = startScan;
-  stopBtn.onclick = stopScan;
-
-  // Başlangıçta sessiz başlar
-  soundEnabled = false;
-
-  // Korkutucu alarm sesi tarama bitince çalsın
-  alarmSound.volume = 0.3;
-  alarmSound.loop = false;
-  alarmSound.onended = () => {
-    // Sonra popup gösterilebilir
-  };
-
-  // Sayfa yüklendiğinde popup uyarı göster
   window.onload = () => {
     showPopup('ALAZ OFLAZ PANEL SİSTEMİNE HOŞ GELDİNİZ');
+    setTimeout(scanNextLine, 1500);
   };
 })();
 </script>
