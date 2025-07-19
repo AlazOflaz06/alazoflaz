@@ -1,90 +1,428 @@
-<!DOCTYPE html><html lang="tr">
+<!DOCTYPE html>
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alaz Oflaz Panel</title>
-  <style>
-    body {
-      background: black;
-      color: #00ff00;
-      font-family: 'Courier New', monospace;
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alaz Oflaz Sahte Hack Panel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+  html, body {
+    margin:0; padding:0; height:100%;
+    background: black;
+    color: #00ff00;
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+    user-select:none;
+  }
+  body {
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+  }
+  #terminal {
+    white-space: pre-wrap;
+    font-size: 18px;
+    line-height: 1.3;
+    max-width: 800px;
+    width: 95vw;
+    height: 60vh;
+    background: rgba(0,0,0,0.9);
+    border: 2px solid #00ff00;
+    padding: 15px 20px;
+    overflow-y: auto;
+    box-shadow: 0 0 10px #00ff00;
+    position: relative;
+  }
+  #terminal::-webkit-scrollbar {
+    width: 8px;
+  }
+  #terminal::-webkit-scrollbar-thumb {
+    background: #00ff00;
+    border-radius: 10px;
+  }
+  .line {
+    margin-bottom: 6px;
+  }
+  .warning {
+    color: red;
+    font-weight: bold;
+    animation: blink 1s infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .glitch {
+    color: red;
+    animation: glitch 0.3s infinite;
+  }
+  @keyframes glitch {
+    0% { text-shadow: 2px 0 red; }
+    50% { text-shadow: -2px 0 blue; }
+    100% { text-shadow: 2px 0 red; }
+  }
+  .window {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #111;
+    color: red;
+    padding: 12px 18px;
+    border: 1px solid red;
+    box-shadow: 0 0 20px red;
+    font-size: 16px;
+    animation: fade 4s ease-in-out forwards;
+    z-index: 50;
+    user-select:none;
+  }
+  @keyframes fade {
+    0% { opacity: 0; }
+    25% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .image-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: url('https://raw.githubusercontent.com/AlazOflaz06/assets/main/korku_art.png') center/cover no-repeat;
+    filter: brightness(0.25);
+    z-index: -2;
+  }
+  /* Glitch overlay */
+  .glitch-overlay {
+    position: fixed;
+    top:0; left:0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(255,0,0,0.05),
+      rgba(255,0,0,0.05) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+    mix-blend-mode: screen;
+    animation: glitch-overlay 0.3s infinite;
+    z-index: -1;
+  }
+  @keyframes glitch-overlay {
+    0% { background-position: 0 0; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0 0; }
+  }
+  /* Cursor */
+  .cursor {
+    display:inline-block;
+    width: 10px;
+    background: #00ff00;
+    animation: blink-cursor 1s step-start infinite;
+    margin-left: 2px;
+  }
+  @keyframes blink-cursor {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+  /* Buttons */
+  #controls {
+    margin-top: 15px;
+    display: flex;
+    gap: 15px;
+    user-select:none;
+  }
+  button {
+    background: transparent;
+    border: 2px solid #00ff00;
+    color: #00ff00;
+    padding: 8px 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.3s;
+  }
+  button:hover {
+    background: #00ff00;
+    color: black;
+  }
+  /* Progress bars */
+  .progress-container {
+    width: 100%;
+    background: #222;
+    border-radius: 8px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 14px;
+    background: #00ff00;
+    width: 0;
+    transition: width 0.3s ease;
+  }
+  /* Responsive */
+  @media (max-width: 600px) {
     #terminal {
-      white-space: pre-wrap;
-      font-size: 16px;
-      padding: 20px;
-      animation: type 5s steps(40, end) 1;
-    }
-    @keyframes type {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-    .warning {
-      color: red;
-      font-weight: bold;
-      animation: blink 1s infinite;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-    .glitch {
-      color: red;
-      animation: glitch 0.3s infinite;
-    }
-    @keyframes glitch {
-      0% { text-shadow: 2px 0 red; }
-      50% { text-shadow: -2px 0 blue; }
-      100% { text-shadow: 2px 0 red; }
-    }
-    .window {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #111;
-      color: red;
-      padding: 10px;
-      border: 1px solid red;
-      box-shadow: 0 0 20px red;
       font-size: 14px;
-      animation: fade 4s ease-in-out;
+      height: 50vh;
     }
-    @keyframes fade {
-      0% { opacity: 0; }
-      25% { opacity: 1; }
-      100% { opacity: 0; }
+    button {
+      font-size: 14px;
+      padding: 6px 10px;
     }
-    .image-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: url('https://raw.githubusercontent.com/AlazOflaz06/assets/main/korku_art.png') center/cover no-repeat;
-      z-index: -1;
-      filter: brightness(0.3);
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
   <div class="image-bg"></div>
-  <div id="terminal">
-    <div class="warning">IP TESPİT EDİLDİ...</div>
-    KONUM BULUNDU: ANKARA / TÜRKİYE
-    <br>
-    ALAZ OFLAZ SİSTEMİNİZE ERİŞİYOR...
-    <br>
-    VERİLERİNİZ YÜKLENİYOR...
-    <br>
-    CİHAZINIZ 15 SANİYE İÇİNDE KONTROL ALTINA ALINACAK...
-    <br>
-    <div class="glitch">SİSTEM GÜVENLİĞİNİZ AŞILDI</div>
-    <br>
-    <div class="glitch">KAYITLI TÜM BİLGİLERİNİZ GÖNDERİLİYOR...</div>
+  <div class="glitch-overlay"></div>
+  <div id="terminal" aria-live="polite" aria-atomic="true" role="log"></div>
+
+  <div id="controls">
+    <button id="startBtn">Tarama Başlat</button>
+    <button id="stopBtn" disabled>Tarama Durdur</button>
+    <button id="toggleSoundBtn">Ses Aç</button>
   </div>
-  <div class="window">UYARI: SİSTEM UYUMLULUĞU BAŞARISIZ. KONTROL ELE GEÇİRİLİYOR.</div>
+
+  <div id="popup" class="window" style="display:none; user-select:none;"></div>
+
+  <audio id="alarmSound" src="https://freesound.org/data/previews/341/341695_6267276-lq.mp3" preload="auto"></audio>
+  <audio id="typingSound" src="https://freesound.org/data/previews/415/415209_5121236-lq.mp3" preload="auto"></audio>
+
+<script>
+(() => {
+  const terminal = document.getElementById('terminal');
+  const popup = document.getElementById('popup');
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const toggleSoundBtn = document.getElementById('toggleSoundBtn');
+  const alarmSound = document.getElementById('alarmSound');
+  const typingSound = document.getElementById('typingSound');
+
+  let soundEnabled = false;
+  let scanInterval;
+  let typingInterval;
+  let currentLine = 0;
+  let isScanning = false;
+
+  // Sahte IP, konum, ISP listesi
+  const fakeData = {
+    ips: [
+      '185.56.230.123',
+      '92.45.176.238',
+      '185.134.60.44',
+      '78.187.94.211',
+      '185.61.149.203',
+      '193.140.30.10',
+      '95.173.72.196',
+      '185.38.114.5',
+      '212.174.30.12'
+    ],
+    locations: [
+      'Ankara / Türkiye',
+      'İstanbul / Türkiye',
+      'İzmir / Türkiye',
+      'Bursa / Türkiye',
+      'Antalya / Türkiye',
+      'Konya / Türkiye',
+      'Kayseri / Türkiye',
+      'Adana / Türkiye',
+      'Diyarbakır / Türkiye'
+    ],
+    isps: [
+      'Turk Telekom',
+      'Vodafone Türkiye',
+      'Türkcell',
+      'Superonline',
+      'Millenicom',
+      'D-Smart',
+      'Turknet',
+      'KabloNet',
+      'NetOne'
+    ]
+  };
+
+  // Tarama sırasında gösterilecek sahte satırlar
+  const scanLines = [
+    () => `IP TESPİT EDİLDİ: ${randomItem(fakeData.ips)}`,
+    () => `KONUM BULUNDU: ${randomItem(fakeData.locations)}`,
+    () => `ISP: ${randomItem(fakeData.isps)}`,
+    () => `ALA Oflaz SİSTEMİNİZE ERİŞİYOR...`,
+    () => `VERİLERİNİZ YÜKLENİYOR...`,
+    () => `CİHAZINIZ ${randomInt(10,20)} SANİYE İÇİNDE KONTROL ALTINA ALINACAK...`,
+    () => `<span class="glitch">SİSTEM GÜVENLİĞİNİZ AŞILDI</span>`,
+    () => `<span class="glitch">KAYITLI TÜM BİLGİLERİNİZ GÖNDERİLİYOR...</span>`,
+    () => `<span class="warning">UYARI: SİSTEM UYUMLULUĞU BAŞARISIZ. KONTROL ELE GEÇİRİLİYOR.</span>`
+  ];
+
+  // Popup mesajlar
+  const popupMessages = [
+    'FIREWALL DEVRE DIŞI BIRAKILDI!',
+    'ANTİVİRÜS PROGRAMI KAPATILDI!',
+    'SİSTEMDE ŞÜPHELİ GİRİŞ TESPİT EDİLDİ!',
+    'KULLANICI VERİLERİ ÇALINIYOR!',
+    'YÖNETİCİ İZİ İPTAL EDİLDİ!',
+    'AĞ TRAFİĞİ İZLENİYOR...',
+    'KOMUTLAR İŞLENİYOR...',
+    'DOSYA ŞİFRELEME DEVREYE GİRDİ!',
+    'SİSTEM ELE GEÇİRİLDİ!',
+  ];
+
+  // Yazı animasyon fonksiyonu
+  function typeLine(text, callback) {
+    let i = 0;
+    let lineElem = document.createElement('div');
+    lineElem.className = 'line';
+    terminal.appendChild(lineElem);
+    function typeChar() {
+      if (i < text.length) {
+        lineElem.innerHTML += text.charAt(i);
+        i++;
+        if(soundEnabled) {
+          typingSound.currentTime = 0;
+          typingSound.play();
+        }
+        setTimeout(typeChar, randomInt(20, 50));
+      } else {
+        // Cursor ekle
+        let cursor = document.createElement('span');
+        cursor.className = 'cursor';
+        lineElem.appendChild(cursor);
+        if (callback) callback();
+      }
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+    typeChar();
+  }
+
+  // Rastgele item seçici
+  function randomItem(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  // Rastgele int arası sayı
+  function randomInt(min,max) {
+    return Math.floor(Math.random() * (max-min+1)) + min;
+  }
+
+  // Popup göster
+  function showPopup(msg) {
+    popup.textContent = msg;
+    popup.style.display = 'block';
+    popup.style.animation = 'fade 4s ease-in-out forwards';
+    setTimeout(() => {
+      popup.style.display = 'none';
+    }, 4000);
+  }
+
+  // Tarama başlat
+  function startScan() {
+    if(isScanning) return;
+    isScanning = true;
+    currentLine = 0;
+    terminal.innerHTML = '';
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    showPopup('TARAMA BAŞLATILDI');
+    scanInterval = setInterval(() => {
+      if(currentLine < scanLines.length) {
+        typeLine(scanLines[currentLine]());
+        currentLine++;
+      } else {
+        // Dosya indirme göster
+        clearInterval(scanInterval);
+        fakeDownload(() => {
+          showPopup(randomItem(popupMessages));
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+          isScanning = false;
+        });
+      }
+    }, 3000);
+  }
+
+  // Tarama durdur
+  function stopScan() {
+    clearInterval(scanInterval);
+    isScanning = false;
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+    showPopup('TARAMA DURDURULDU');
+  }
+
+  // Sahte dosya indirme animasyonu
+  function fakeDownload(callback) {
+    typeLine('DOSYA İNDİRİLİYOR: exploit_data.bin');
+    let progressContainer = document.createElement('div');
+    progressContainer.className = 'progress-container';
+    let progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar';
+    progressContainer.appendChild(progressBar);
+    terminal.appendChild(progressContainer);
+    let width = 0;
+    let interval = setInterval(() => {
+      width += randomInt(5, 15);
+      if(width > 100) width = 100;
+      progressBar.style.width = width + '%';
+      terminal.scrollTop = terminal.scrollHeight;
+      if(width === 100) {
+        clearInterval(interval);
+        typeLine('DOSYA YÜKLENİYOR...');
+        fakeUpload(callback);
+      }
+    }, 400);
+  }
+  // Sahte dosya yükleme animasyonu
+  function fakeUpload(callback) {
+    typeLine('VERİLER SUNUCUYA GÖNDERİLİYOR...');
+    let progressContainer = document.createElement('div');
+    progressContainer.className = 'progress-container';
+    let progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar';
+    progressContainer.appendChild(progressBar);
+    terminal.appendChild(progressContainer);
+    let width = 0;
+    let interval = setInterval(() => {
+      width += randomInt(5, 20);
+      if(width > 100) width = 100;
+      progressBar.style.width = width + '%';
+      terminal.scrollTop = terminal.scrollHeight;
+      if(width === 100) {
+        clearInterval(interval);
+        typeLine('<span class="warning">UYARI: SİSTEM ELE GEÇİRİLDİ!</span>');
+        if(callback) callback();
+      }
+    }, 300);
+  }
+
+  // Ses aç/kapa toggle
+  toggleSoundBtn.onclick = () => {
+    soundEnabled = !soundEnabled;
+    toggleSoundBtn.textContent = soundEnabled ? 'Ses Kapat' : 'Ses Aç';
+    if(!soundEnabled) {
+      alarmSound.pause();
+      typingSound.pause();
+    }
+  };
+
+  startBtn.onclick = startScan;
+  stopBtn.onclick = stopScan;
+
+  // Başlangıçta sessiz başlar
+  soundEnabled = false;
+
+  // Korkutucu alarm sesi tarama bitince çalsın
+  alarmSound.volume = 0.3;
+  alarmSound.loop = false;
+  alarmSound.onended = () => {
+    // Sonra popup gösterilebilir
+  };
+
+  // Sayfa yüklendiğinde popup uyarı göster
+  window.onload = () => {
+    showPopup('ALAZ OFLAZ PANEL SİSTEMİNE HOŞ GELDİNİZ');
+  };
+})();
+</script>
 </body>
 </html>
