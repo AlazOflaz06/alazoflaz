@@ -7,19 +7,20 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
   html, body {
-    margin:0; padding:0; height:100%;
+    margin: 0; padding: 0; height: 100%;
     background: black;
-    color: #00ff00;
-    font-family: 'Share Tech Mono', monospace;
     overflow: hidden;
+    font-family: 'Share Tech Mono', monospace;
+    color: #00ff00;
     user-select:none;
   }
-  body {
-    display:flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 20px;
+  #matrix {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -3;
+    background: black;
   }
   #terminal {
     white-space: pre-wrap;
@@ -28,12 +29,13 @@
     max-width: 800px;
     width: 95vw;
     height: 70vh;
-    background: rgba(0,0,0,0.9);
+    background: rgba(0,0,0,0.85);
     border: 2px solid #00ff00;
     padding: 15px 20px;
     overflow-y: auto;
     box-shadow: 0 0 10px #00ff00;
     position: relative;
+    margin: 20px auto;
   }
   #terminal::-webkit-scrollbar {
     width: 8px;
@@ -82,36 +84,6 @@
     25% { opacity: 1; }
     100% { opacity: 0; }
   }
-  .image-bg {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: url('https://raw.githubusercontent.com/AlazOflaz06/assets/main/korku_art.png') center/cover no-repeat;
-    filter: brightness(0.25);
-    z-index: -2;
-  }
-  /* Glitch overlay */
-  .glitch-overlay {
-    position: fixed;
-    top:0; left:0;
-    width: 100vw; height: 100vh;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(255,0,0,0.05),
-      rgba(255,0,0,0.05) 2px,
-      transparent 2px,
-      transparent 4px
-    );
-    mix-blend-mode: screen;
-    animation: glitch-overlay 0.3s infinite;
-    z-index: -1;
-  }
-  @keyframes glitch-overlay {
-    0% { background-position: 0 0; }
-    50% { background-position: 100% 100%; }
-    100% { background-position: 0 0; }
-  }
   /* Cursor */
   .cursor {
     display:inline-block;
@@ -127,8 +99,8 @@
 </style>
 </head>
 <body>
-  <div class="image-bg"></div>
-  <div class="glitch-overlay"></div>
+  <canvas id="matrix"></canvas>
+
   <div id="terminal" aria-live="polite" aria-atomic="true" role="log"></div>
 
   <div id="popup" class="window" style="display:none; user-select:none;"></div>
@@ -211,7 +183,7 @@
           typingSound.currentTime = 0;
           typingSound.play();
         }
-        setTimeout(typeChar, randomInt(10, 25));
+        setTimeout(typeChar, randomInt(5, 15));  // hızlı ve akıcı
       } else {
         let cursor = document.createElement('span');
         cursor.className = 'cursor';
@@ -240,7 +212,6 @@
     }, 4000);
   }
 
-  // Dosya indirme ve yükleme animasyonları
   function fakeDownload(callback) {
     typeLine('DOSYA İNDİRİLİYOR: exploit_data.bin', () => {
       let progressContainer = document.createElement('div');
@@ -293,7 +264,6 @@
         setTimeout(scanNextLine, 2500);
       });
     } else {
-      // Tüm satırlar yazıldı, dosya animasyonlarına geç
       setTimeout(fakeDownload, 1000);
     }
   }
@@ -302,6 +272,43 @@
     showPopup('ALAZ OFLAZ PANEL SİSTEMİNE HOŞ GELDİNİZ');
     setTimeout(scanNextLine, 1500);
   };
+
+  // Matrix arka plan kodu
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const letters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズヅブプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const fontSize = 18;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = new Array(columns).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+
+    for(let i = 0; i < drops.length; i++) {
+      const text = letters.charAt(Math.floor(Math.random() * letters.length));
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+
+  setInterval(drawMatrix, 35);
+
 })();
 </script>
 </body>
