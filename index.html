@@ -184,6 +184,8 @@
 </div>
 
 <script>
+  const container = document.getElementById("container");
+
   // Komut satırı simülasyonu
   const commands = [
     "ls /home/user",
@@ -281,81 +283,99 @@
   }
 
   function tick() {
-    countdown--;
-    countdownEl.textContent = "Sistem tamamen ele geçirilecek: " + countdown;
-    progressBar.style.width = ((15 - countdown) / 15) * 100 + "%";
+  countdown--;
+  countdownEl.textContent = "Sistem tamamen ele geçirilecek: " + countdown;
+  progressBar.style.width = ((15 - countdown) / 15) * 100 + "%";
 
-    glitchEffect((15 - countdown) / 15);
+  glitchEffect((15 - countdown) / 15);
 
-    if (countdown % 4 === 0) {
-      showPopup();
-    }
-
-    if (countdown <= 5 && countdown > 0) {
-      body.style.filter = `brightness(${0.5 + countdown * 0.1})`;
-    }
-
-    if (countdown <= 0) {
-      // Sistem çökme: Mavi ekran aç
-      bluescreen.style.display = "flex";
-      glitchOverlay.style.opacity = 0;
-      crack1.style.opacity = 0;
-      crack2.style.opacity = 0;
-      countdownEl.style.display = "none";
-      progressBar.style.width = "100%";
-      clearInterval(timer);
-    }
+  // Son 2 saniyede kırmızı uyarı göster
+  if (countdown === 2) {
+    const alertDiv = document.createElement("div");
+    alertDiv.style.color = "red";
+    alertDiv.style.fontWeight = "bold";
+    alertDiv.style.textAlign = "center";
+    alertDiv.style.marginTop = "15px";
+    alertDiv.style.fontSize = "1.3em";
+    alertDiv.textContent = "Sisteminizdeki tüm veriler AlazOflaz'a iletildi!";
+    container.appendChild(alertDiv);
   }
 
-  const timer = setInterval(tick, 1000);
+  if (countdown % 4 === 0 && countdown > 0) {
+    showPopup();
+  }
 
-  // Popup uyarılar
-  const popupTexts = [
-    "Güvenlik Duvarı Aşıldı!",
-    "Şifreler Ele Geçirildi!",
-    "Veriler İndiriliyor...",
-    "Sistem Alarmı Aktif!",
-    "Root Yetkileri Sağlandı!",
-    "Şifre Çözme Başladı!",
-    "Dosyalar Siliniyor!",
-    "Saldırı Tespit Edildi!",
-    "Erişim Engellendi!",
-    "Kötü Amaçlı Yazılım Tespit Edildi!"
+  if (countdown <= 5 && countdown > 0) {
+    body.style.filter = `brightness(${0.5 + countdown * 0.1})`;
+  }
+
+  if (countdown <= 0) {
+    // Mavi ekran aç
+    bluescreen.style.display = "flex";
+    bluescreen.innerHTML = `
+      <div>!!! SİSTEM ÇÖKTÜ !!!</div><br>
+      <div style="font-size:2em; font-weight:bold; margin-top:20px;">
+        Alaz Oflaz Sisteminizi Çökertti!
+      </div>
+    `;
+    glitchOverlay.style.opacity = 0;
+    crack1.style.opacity = 0;
+    crack2.style.opacity = 0;
+    countdownEl.style.display = "none";
+    progressBar.style.width = "100%";
+    clearInterval(timer);
+  }
+}
+
+const timer = setInterval(tick, 1000);
+
+// Popup uyarılar
+const popupTexts = [
+  "Güvenlik Duvarı Aşıldı!",
+  "Şifreler Ele Geçirildi!",
+  "Veriler İndiriliyor...",
+  "Sistem Alarmı Aktif!",
+  "Root Yetkileri Sağlandı!",
+  "Şifre Çözme Başladı!",
+  "Dosyalar Siliniyor!",
+  "Saldırı Tespit Edildi!",
+  "Erişim Engellendi!",
+  "Kötü Amaçlı Yazılım Tespit Edildi!"
+];
+const popups = document.getElementById("popups");
+
+function showPopup() {
+  const popup = document.createElement("div");
+  popup.className = "popup";
+  popup.textContent = popupTexts[Math.floor(Math.random() * popupTexts.length)];
+  popups.appendChild(popup);
+  setTimeout(() => {
+    popup.remove();
+  }, 4000);
+}
+
+// Gerçek zamanlı saat ve sahte IP
+const timeEl = document.getElementById("time");
+const fakeIpEl = document.getElementById("fake-ip");
+
+function updateTimeAndIP() {
+  const now = new Date();
+  timeEl.textContent = now.toLocaleTimeString("tr-TR");
+
+  const fakeIPs = [
+    "45.33.12.101",
+    "192.168.1.45",
+    "88.77.65.44",
+    "10.0.0.5",
+    "172.16.254.1",
+    "203.0.113.15",
+    "66.249.66.1"
   ];
-  const popups = document.getElementById("popups");
-
-  function showPopup() {
-    const popup = document.createElement("div");
-    popup.className = "popup";
-    popup.textContent = popupTexts[Math.floor(Math.random() * popupTexts.length)];
-    popups.appendChild(popup);
-    setTimeout(() => {
-      popup.remove();
-    }, 4000);
-  }
-
-  // Gerçek zamanlı saat ve sahte IP
-  const timeEl = document.getElementById("time");
-  const fakeIpEl = document.getElementById("fake-ip");
-
-  function updateTimeAndIP() {
-    const now = new Date();
-    timeEl.textContent = now.toLocaleTimeString("tr-TR");
-
-    const fakeIPs = [
-      "45.33.12.101",
-      "192.168.1.45",
-      "88.77.65.44",
-      "10.0.0.5",
-      "172.16.254.1",
-      "203.0.113.15",
-      "66.249.66.1"
-    ];
-    const randomIP = fakeIPs[Math.floor(Math.random() * fakeIPs.length)];
-    fakeIpEl.textContent = "IP: " + randomIP;
-  }
-  updateTimeAndIP();
-  setInterval(updateTimeAndIP, 5000);
+  const randomIP = fakeIPs[Math.floor(Math.random() * fakeIPs.length)];
+  fakeIpEl.textContent = "IP: " + randomIP;
+}
+updateTimeAndIP();
+setInterval(updateTimeAndIP, 5000);
 </script>
 
 </body>
