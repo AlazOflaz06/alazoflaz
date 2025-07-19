@@ -3,313 +3,296 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Alaz Oflaz Sahte Hack Panel</title>
+<title>Alaz Oflaz Hack Panel</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-  html, body {
-    margin: 0; padding: 0; height: 100%;
+  body {
+    margin:0; padding:0;
     background: black;
-    overflow: hidden;
-    font-family: 'Share Tech Mono', monospace;
     color: #00ff00;
-    user-select:none;
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+    user-select: none;
   }
-  #matrix {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -3;
-    background: black;
-  }
-  #terminal {
-    white-space: pre-wrap;
-    font-size: 18px;
-    line-height: 1.3;
+  #container {
+    padding: 20px;
     max-width: 800px;
-    width: 95vw;
-    height: 70vh;
-    background: rgba(0,0,0,0.85);
-    border: 2px solid #00ff00;
-    padding: 15px 20px;
+    margin: auto;
+  }
+  h1 {
+    color: red;
+    font-size: 3em;
+    text-align: center;
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px red;
+  }
+  .info {
+    font-size: 1.2em;
+    margin-top: 10px;
+    white-space: pre-line;
+  }
+  #command-line {
+    margin-top: 20px;
+    background: #001100;
+    padding: 15px;
+    min-height: 150px;
+    border: 1px solid #00ff00;
     overflow-y: auto;
-    box-shadow: 0 0 10px #00ff00;
-    position: relative;
-    margin: 20px auto;
+    font-size: 1em;
   }
-  #terminal::-webkit-scrollbar {
-    width: 8px;
-  }
-  #terminal::-webkit-scrollbar-thumb {
-    background: #00ff00;
-    border-radius: 10px;
-  }
-  .line {
-    margin-bottom: 6px;
-  }
-  .warning {
-    color: red;
+  #countdown {
+    font-size: 1.5em;
     font-weight: bold;
-    animation: blink 1s infinite;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-  .glitch {
     color: red;
-    animation: glitch 0.3s infinite;
+    margin-top: 20px;
+    text-align: center;
+    text-shadow: 0 0 10px red;
   }
-  @keyframes glitch {
-    0% { text-shadow: 2px 0 red; }
-    50% { text-shadow: -2px 0 blue; }
-    100% { text-shadow: 2px 0 red; }
-  }
-  .window {
+  /* Popup uyarılar */
+  #popups {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: #111;
-    color: red;
-    padding: 12px 18px;
+    width: 280px;
+    z-index: 9999;
+  }
+  .popup {
+    background: #220000cc;
     border: 1px solid red;
-    box-shadow: 0 0 20px red;
-    font-size: 16px;
-    animation: fade 4s ease-in-out forwards;
-    z-index: 50;
-    user-select:none;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: #ff5555;
+    font-weight: bold;
+    font-family: 'Share Tech Mono', monospace;
+    box-shadow: 0 0 10px red;
+    animation: fadeinout 4s forwards;
+    user-select: none;
   }
-  @keyframes fade {
-    0% { opacity: 0; }
-    25% { opacity: 1; }
-    100% { opacity: 0; }
+  @keyframes fadeinout {
+    0% {opacity: 0; transform: translateX(100%)}
+    10% {opacity: 1; transform: translateX(0)}
+    90% {opacity: 1; transform: translateX(0)}
+    100% {opacity: 0; transform: translateX(100%)}
   }
-  /* Cursor */
-  .cursor {
-    display:inline-block;
-    width: 10px;
+  /* İlerleme çubuğu */
+  #progress-bar-container {
+    background: #004400;
+    border: 1px solid #00ff00;
+    width: 100%;
+    height: 25px;
+    margin-top: 20px;
+  }
+  #progress-bar {
     background: #00ff00;
-    animation: blink-cursor 1s step-start infinite;
-    margin-left: 2px;
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
   }
-  @keyframes blink-cursor {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
+  /* Glitch ve kırık ekran efektleri */
+  #glitch-overlay {
+    pointer-events: none;
+    position: fixed;
+    top:0; left:0; width: 100vw; height: 100vh;
+    mix-blend-mode: screen;
+    animation: glitchAnim 2s infinite;
+  }
+  @keyframes glitchAnim {
+    0% { clip-path: inset(20% 0 30% 0); transform: translate(-5px, -2px);}
+    20% { clip-path: inset(10% 0 10% 0); transform: translate(5px, 2px);}
+    40% { clip-path: inset(30% 0 20% 0); transform: translate(-5px, 0);}
+    60% { clip-path: inset(15% 0 25% 0); transform: translate(5px, -2px);}
+    80% { clip-path: inset(25% 0 15% 0); transform: translate(-5px, 2px);}
+    100% { clip-path: inset(20% 0 30% 0); transform: translate(0, 0);}
+  }
+  /* Kırık ekran efektleri */
+  #crack1, #crack2 {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: url('https://raw.githubusercontent.com/AlazOflaz06/assets/main/crack1.png') no-repeat center center;
+    background-size: contain;
+    opacity: 0;
+    mix-blend-mode: screen;
+  }
+  #crack2 {
+    background-image: url('https://raw.githubusercontent.com/AlazOflaz06/assets/main/crack2.png');
+  }
+  /* Mavi ekran */
+  #bluescreen {
+    position: fixed;
+    top:0; left:0; width: 100vw; height: 100vh;
+    background: #0000aa;
+    color: white;
+    font-family: monospace;
+    font-size: 1.5em;
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    user-select: none;
+    z-index: 10000;
+  }
+  /* Saat ve IP üst köşe */
+  #top-right-info {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    color: #00ff00;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9em;
+    user-select: none;
+    text-shadow: 0 0 5px #00ff00;
+    z-index: 9999;
   }
 </style>
 </head>
 <body>
-  <canvas id="matrix"></canvas>
 
-  <div id="terminal" aria-live="polite" aria-atomic="true" role="log"></div>
+<div id="container">
+  <h1>SİSTEMİNİZ ELE GEÇİRİLDİ!</h1>
+  <div class="info" id="info-text">
+    IP TESPİT EDİLDİ: <span id="ip">192.168.1.45</span><br>
+    KONUM BULUNDU: TÜRKİYE<br>
+    VERİLERİNİZ ÇALINIYOR...
+  </div>
+  <div id="command-line" aria-live="polite" aria-atomic="false"></div>
+  <div id="countdown">Sistem tamamen ele geçirilecek: 15</div>
+  <div id="progress-bar-container">
+    <div id="progress-bar"></div>
+  </div>
+</div>
 
-  <div id="popup" class="window" style="display:none; user-select:none;"></div>
+<div id="popups"></div>
 
-  <audio id="alarmSound" src="https://freesound.org/data/previews/341/341695_6267276-lq.mp3" preload="auto"></audio>
-  <audio id="typingSound" src="https://freesound.org/data/previews/415/415209_5121236-lq.mp3" preload="auto"></audio>
+<div id="glitch-overlay"></div>
+<div id="crack1"></div>
+<div id="crack2"></div>
+
+<div id="bluescreen">
+  <div>!!! SİSTEM ÇÖKTÜ !!!</div>
+  <br>
+  <div>Lütfen cihazınızı yeniden başlatın.</div>
+</div>
+
+<div id="top-right-info">
+  <div id="time"></div>
+  <div id="fake-ip"></div>
+</div>
 
 <script>
-(() => {
-  const terminal = document.getElementById('terminal');
-  const popup = document.getElementById('popup');
-  const alarmSound = document.getElementById('alarmSound');
-  const typingSound = document.getElementById('typingSound');
-
-  let soundEnabled = true;
-  let currentLine = 0;
-
-  const fakeData = {
-    ips: [
-      '185.56.230.123',
-      '92.45.176.238',
-      '185.134.60.44',
-      '78.187.94.211',
-      '185.61.149.203',
-      '193.140.30.10',
-      '95.173.72.196',
-      '185.38.114.5',
-      '212.174.30.12'
-    ],
-    locations: [
-      'Türkiye'
-    ],
-    isps: [
-      'Turk Telekom',
-      'Vodafone Türkiye',
-      'Türkcell',
-      'Superonline',
-      'Millenicom',
-      'D-Smart',
-      'Turknet',
-      'KabloNet',
-      'NetOne'
-    ]
-  };
-
-  const scanLines = [
-    () => `IP TESPİT EDİLDİ: ${randomItem(fakeData.ips)}`,
-    () => `KONUM BULUNDU: ${randomItem(fakeData.locations)}`,
-    () => `ISP: ${randomItem(fakeData.isps)}`,
-    () => `ALAZ OFLAZ SİSTEMİNİZE ERİŞİYOR...`,
-    () => `VERİLERİNİZ YÜKLENİYOR...`,
-    () => `CİHAZINIZ ${randomInt(10,20)} SANİYE İÇİNDE KONTROL ALTINA ALINACAK...`,
-    () => `<span class="glitch">SİSTEM GÜVENLİĞİNİZ AŞILDI</span>`,
-    () => `<span class="glitch">KAYITLI TÜM BİLGİLERİNİZ GÖNDERİLİYOR...</span>`,
-    () => `<span class="warning">UYARI: SİSTEM UYUMLULUĞU BAŞARISIZ. KONTROL ELE GEÇİRİLİYOR.</span>`
+  // Komut satırı simülasyonu
+  const commands = [
+    "ls /home/user",
+    "cat secrets.txt",
+    "scp data.zip hacker@darknet",
+    "rm -rf /var/log",
+    "netstat -anp",
+    "whoami",
+    "ifconfig",
+    "ping darknet.node",
+    "sudo ./exploit.sh",
+    "decrypt --key=****",
+    "traceback error at line 452",
+    "sudo shutdown -h now",
+    "fetch passwords.db",
+    "rm -rf / --no-preserve-root",
+    "cat /etc/passwd",
   ];
 
-  const popupMessages = [
-    'FIREWALL DEVRE DIŞI BIRAKILDI!',
-    'ANTİVİRÜS PROGRAMI KAPATILDI!',
-    'SİSTEMDE ŞÜPHELİ GİRİŞ TESPİT EDİLDİ!',
-    'KULLANICI VERİLERİ ÇALINIYOR!',
-    'YÖNETİCİ İZİ İPTAL EDİLDİ!',
-    'AĞ TRAFİĞİ İZLENİYOR...',
-    'KOMUTLAR İŞLENİYOR...',
-    'DOSYA ŞİFRELEME DEVREYE GİRDİ!',
-    'SİSTEM ELE GEÇİRİLDİ!',
+  const outputs = [
+    "secrets.txt\npasswords.db\nlogs\nconfig.cfg\n",
+    "KULLANICI VERİLERİ ŞİFRELİ",
+    "Veri aktarılıyor...",
+    "Erişim reddedildi",
+    "Bağlantı kuruluyor...",
+    "Root erişimi sağlandı",
+    "İşlem tamamlandı",
+    "Hata: Bağlantı kopması",
+    "Şifre çözülüyor...",
+    "Sistem alarmı tetiklendi",
+    "İşlem zaman aşımına uğradı",
+    "Veri siliniyor...",
+    "Dosyalar şifrelendi",
+    "Başarılı giriş yapıldı",
+    "Hacker tarafından kontrol ediliyor"
   ];
 
-  function typeLine(text, callback) {
+  const cmdLine = document.getElementById("command-line");
+  let cmdIndex = 0;
+  let outputIndex = 0;
+
+  function addCommand() {
+    if (cmdIndex >= commands.length) {
+      cmdIndex = 0;
+      outputIndex = 0;
+      cmdLine.innerHTML = "";
+    }
+    const cmd = commands[cmdIndex];
+    const output = outputs[outputIndex];
+
+    // Komut yazımı
     let i = 0;
-    let lineElem = document.createElement('div');
-    lineElem.className = 'line';
-    terminal.appendChild(lineElem);
-    function typeChar() {
-      if (i < text.length) {
-        lineElem.innerHTML += text.charAt(i);
+    const cmdContainer = document.createElement("div");
+    cmdContainer.textContent = "> ";
+    cmdLine.appendChild(cmdContainer);
+
+    const span = document.createElement("span");
+    cmdContainer.appendChild(span);
+
+    function typeCmd() {
+      if (i < cmd.length) {
+        span.textContent += cmd.charAt(i);
         i++;
-        if(soundEnabled) {
-          typingSound.currentTime = 0;
-          typingSound.play();
-        }
-        setTimeout(typeChar, randomInt(5, 15));  // hızlı ve akıcı
+        setTimeout(typeCmd, 50);
       } else {
-        let cursor = document.createElement('span');
-        cursor.className = 'cursor';
-        lineElem.appendChild(cursor);
-        if (callback) callback();
+        // Komut yazıldıktan sonra çıktı ekle
+        const outDiv = document.createElement("div");
+        outDiv.textContent = output;
+        cmdLine.appendChild(outDiv);
+        cmdLine.scrollTop = cmdLine.scrollHeight;
+
+        cmdIndex++;
+        outputIndex++;
+        if (outputIndex >= outputs.length) outputIndex = 0;
+
+        setTimeout(addCommand, 700);
       }
-      terminal.scrollTop = terminal.scrollHeight;
     }
-    typeChar();
+    typeCmd();
   }
 
-  function randomItem(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+  addCommand();
+
+  // Sayaç ve glitch efektleri
+  let countdown = 15;
+  const countdownEl = document.getElementById("countdown");
+  const progressBar = document.getElementById("progress-bar");
+  const glitchOverlay = document.getElementById("glitch-overlay");
+  const crack1 = document.getElementById("crack1");
+  const crack2 = document.getElementById("crack2");
+  const bluescreen = document.getElementById("bluescreen");
+
+  function glitchEffect(level) {
+    glitchOverlay.style.opacity = level * 0.5;
+    crack1.style.opacity = level > 0.5 ? (level - 0.5) * 2 : 0;
+    crack2.style.opacity = level > 0.7 ? (level - 0.7) * 3 : 0;
   }
 
-  function randomInt(min,max) {
-    return Math.floor(Math.random() * (max-min+1)) + min;
-  }
+  function tick() {
+    countdown--;
+    countdownEl.textContent = "Sistem tamamen ele geçirilecek: " + countdown;
+    progressBar.style.width = ((15 - countdown) / 15) * 100 + "%";
 
-  function showPopup(msg) {
-    popup.textContent = msg;
-    popup.style.display = 'block';
-    popup.style.animation = 'fade 4s ease-in-out forwards';
-    setTimeout(() => {
-      popup.style.display = 'none';
-    }, 4000);
-  }
+    glitchEffect((15 - countdown) / 15);
 
-  function fakeDownload(callback) {
-    typeLine('DOSYA İNDİRİLİYOR: exploit_data.bin', () => {
-      let progressContainer = document.createElement('div');
-      progressContainer.className = 'progress-container';
-      let progressBar = document.createElement('div');
-      progressBar.className = 'progress-bar';
-      progressContainer.appendChild(progressBar);
-      terminal.appendChild(progressContainer);
-      let width = 0;
-      let interval = setInterval(() => {
-        width += randomInt(5, 15);
-        if(width > 100) width = 100;
-        progressBar.style.width = width + '%';
-        terminal.scrollTop = terminal.scrollHeight;
-        if(width === 100) {
-          clearInterval(interval);
-          typeLine('DOSYA YÜKLENİYOR...', fakeUpload);
-        }
-      }, 400);
-    });
-  }
-
-  function fakeUpload() {
-    typeLine('VERİLER SUNUCUYA GÖNDERİLİYOR...', () => {
-      let progressContainer = document.createElement('div');
-      progressContainer.className = 'progress-container';
-      let progressBar = document.createElement('div');
-      progressBar.className = 'progress-bar';
-      progressContainer.appendChild(progressBar);
-      terminal.appendChild(progressContainer);
-      let width = 0;
-      let interval = setInterval(() => {
-        width += randomInt(5, 20);
-        if(width > 100) width = 100;
-        progressBar.style.width = width + '%';
-        terminal.scrollTop = terminal.scrollHeight;
-        if(width === 100) {
-          clearInterval(interval);
-          typeLine('<span class="warning">UYARI: SİSTEM ELE GEÇİRİLDİ!</span>');
-          showPopup(randomItem(popupMessages));
-        }
-      }, 300);
-    });
-  }
-
-  function scanNextLine() {
-    if(currentLine < scanLines.length) {
-      typeLine(scanLines[currentLine](), () => {
-        currentLine++;
-        setTimeout(scanNextLine, 2500);
-      });
-    } else {
-      setTimeout(fakeDownload, 1000);
+    // Popup uyarı göster
+    if (countdown % 4 === 0) {
+      showPopup();
     }
-  }
 
-  window.onload = () => {
-    showPopup('ALAZ OFLAZ PANEL SİSTEMİNE HOŞ GELDİNİZ');
-    setTimeout(scanNextLine, 1500);
-  };
-
-  // Matrix arka plan kodu
-  const canvas = document.getElementById('matrix');
-  const ctx = canvas.getContext('2d');
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-
-  const letters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズヅブプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const fontSize = 18;
-  const columns = Math.floor(canvas.width / fontSize);
-  const drops = new Array(columns).fill(1);
-
-  function drawMatrix() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = '#0F0';
-    ctx.font = fontSize + 'px monospace';
-
-    for(let i = 0; i < drops.length; i++) {
-      const text = letters.charAt(Math.floor(Math.random() * letters.length));
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
-      drops[i]++;
-    }
-  }
-
-  setInterval(drawMatrix, 35);
-
-})();
-</script>
-</body>
-</html>
+    if (countdown <= 5 && countdown > 0) {
+      // Mavi ekran hazırlığı, ekranın kararması
+      document.body.style.filter = `brightness(${0.5 + countdown*0
