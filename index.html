@@ -95,6 +95,7 @@
     top:0; left:0; width: 100vw; height: 100vh;
     mix-blend-mode: screen;
     animation: glitchAnim 2s infinite;
+    opacity: 0;
   }
   @keyframes glitchAnim {
     0% { clip-path: inset(20% 0 30% 0); transform: translate(-5px, -2px);}
@@ -233,7 +234,6 @@
     const cmd = commands[cmdIndex];
     const output = outputs[outputIndex];
 
-    // Komut yazımı
     let i = 0;
     const cmdContainer = document.createElement("div");
     cmdContainer.textContent = "> ";
@@ -246,9 +246,8 @@
       if (i < cmd.length) {
         span.textContent += cmd.charAt(i);
         i++;
-        setTimeout(typeCmd, 50);
+        setTimeout(typeCmd, 30);
       } else {
-        // Komut yazıldıktan sonra çıktı ekle
         const outDiv = document.createElement("div");
         outDiv.textContent = output;
         cmdLine.appendChild(outDiv);
@@ -258,15 +257,14 @@
         outputIndex++;
         if (outputIndex >= outputs.length) outputIndex = 0;
 
-        setTimeout(addCommand, 700);
+        setTimeout(addCommand, 500);
       }
     }
     typeCmd();
   }
-
   addCommand();
 
-  // Sayaç ve glitch efektleri
+  // Sayaç, glitch ve diğer efektler
   let countdown = 15;
   const countdownEl = document.getElementById("countdown");
   const progressBar = document.getElementById("progress-bar");
@@ -274,11 +272,12 @@
   const crack1 = document.getElementById("crack1");
   const crack2 = document.getElementById("crack2");
   const bluescreen = document.getElementById("bluescreen");
+  const body = document.body;
 
   function glitchEffect(level) {
-    glitchOverlay.style.opacity = level * 0.5;
-    crack1.style.opacity = level > 0.5 ? (level - 0.5) * 2 : 0;
-    crack2.style.opacity = level > 0.7 ? (level - 0.7) * 3 : 0;
+    glitchOverlay.style.opacity = level * 0.6;
+    crack1.style.opacity = level > 0.4 ? (level - 0.4) * 2.5 : 0;
+    crack2.style.opacity = level > 0.7 ? (level - 0.7) * 3.3 : 0;
   }
 
   function tick() {
@@ -288,11 +287,76 @@
 
     glitchEffect((15 - countdown) / 15);
 
-    // Popup uyarı göster
     if (countdown % 4 === 0) {
       showPopup();
     }
 
     if (countdown <= 5 && countdown > 0) {
-      // Mavi ekran hazırlığı, ekranın kararması
-      document.body.style.filter = `brightness(${0.5 + countdown*0
+      body.style.filter = `brightness(${0.5 + countdown * 0.1})`;
+    }
+
+    if (countdown <= 0) {
+      // Sistem çökme: Mavi ekran aç
+      bluescreen.style.display = "flex";
+      glitchOverlay.style.opacity = 0;
+      crack1.style.opacity = 0;
+      crack2.style.opacity = 0;
+      countdownEl.style.display = "none";
+      progressBar.style.width = "100%";
+      clearInterval(timer);
+    }
+  }
+
+  const timer = setInterval(tick, 1000);
+
+  // Popup uyarılar
+  const popupTexts = [
+    "Güvenlik Duvarı Aşıldı!",
+    "Şifreler Ele Geçirildi!",
+    "Veriler İndiriliyor...",
+    "Sistem Alarmı Aktif!",
+    "Root Yetkileri Sağlandı!",
+    "Şifre Çözme Başladı!",
+    "Dosyalar Siliniyor!",
+    "Saldırı Tespit Edildi!",
+    "Erişim Engellendi!",
+    "Kötü Amaçlı Yazılım Tespit Edildi!"
+  ];
+  const popups = document.getElementById("popups");
+
+  function showPopup() {
+    const popup = document.createElement("div");
+    popup.className = "popup";
+    popup.textContent = popupTexts[Math.floor(Math.random() * popupTexts.length)];
+    popups.appendChild(popup);
+    setTimeout(() => {
+      popup.remove();
+    }, 4000);
+  }
+
+  // Gerçek zamanlı saat ve sahte IP
+  const timeEl = document.getElementById("time");
+  const fakeIpEl = document.getElementById("fake-ip");
+
+  function updateTimeAndIP() {
+    const now = new Date();
+    timeEl.textContent = now.toLocaleTimeString("tr-TR");
+
+    const fakeIPs = [
+      "45.33.12.101",
+      "192.168.1.45",
+      "88.77.65.44",
+      "10.0.0.5",
+      "172.16.254.1",
+      "203.0.113.15",
+      "66.249.66.1"
+    ];
+    const randomIP = fakeIPs[Math.floor(Math.random() * fakeIPs.length)];
+    fakeIpEl.textContent = "IP: " + randomIP;
+  }
+  updateTimeAndIP();
+  setInterval(updateTimeAndIP, 5000);
+</script>
+
+</body>
+</html>
